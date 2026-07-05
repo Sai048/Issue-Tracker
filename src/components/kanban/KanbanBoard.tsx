@@ -170,7 +170,6 @@ const KanbanBoard = ({ projectId }: KanbanBoardProps) => {
     );
 
     setUsers(uniqueUsers);
-    
   };
 
   // ===========================
@@ -515,12 +514,36 @@ const KanbanBoard = ({ projectId }: KanbanBoardProps) => {
       {/* Board */}
 
       <DragDropContext onDragEnd={handleDragEnd}>
+        {/* MOBILE */}
+        <div className="flex flex-col gap-5 lg:hidden">
+          {sections.map((section) => {
+            const sectionTasks = tasks
+              .filter((task) => task.section_id === section.id)
+              .sort((a, b) => a.position - b.position);
+
+            return (
+              <div key={section.id} className="w-full">
+                <KanbanColumn
+                  section={section}
+                  tasks={sectionTasks}
+                  users={users}
+                  onTaskClick={openTask}
+                  onAddTask={addTask}
+                />
+              </div>
+            );
+          })}
+        </div>
+
+        {/* DESKTOP */}
         <div
           className="
-    flex h-full gap-6
-    overflow-x-auto overflow-y-hidden
-    pb-4
-  "
+      hidden lg:flex
+      gap-6
+      overflow-x-auto
+      overflow-y-hidden
+      pb-4
+    "
         >
           {sections.map((section) => {
             const sectionTasks = tasks
@@ -528,14 +551,22 @@ const KanbanBoard = ({ projectId }: KanbanBoardProps) => {
               .sort((a, b) => a.position - b.position);
 
             return (
-              <KanbanColumn
+              <div
                 key={section.id}
-                section={section}
-                tasks={sectionTasks}
-                users={users}
-                onTaskClick={openTask}
-                onAddTask={addTask}
-              />
+                className="
+            min-w-[360px]
+            max-w-[360px]
+            flex-shrink-0
+          "
+              >
+                <KanbanColumn
+                  section={section}
+                  tasks={sectionTasks}
+                  users={users}
+                  onTaskClick={openTask}
+                  onAddTask={addTask}
+                />
+              </div>
             );
           })}
         </div>

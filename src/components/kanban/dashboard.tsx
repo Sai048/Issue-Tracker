@@ -130,89 +130,89 @@ const Dashboard = () => {
   // ===========================
 
   return (
-    <div className="h-screen overflow-hidden bg-slate-50">
+    <div className="min-h-screen bg-slate-50">
       {/* Sidebar */}
       <Sidebar collapsed={collapsed} setCollapsed={setCollapsed} />
 
       {/* Main */}
       <main
         className={`
-    h-screen overflow-hidden
-    bg-slate-50 transition-all duration-300
-    ml-0
-    ${collapsed ? "lg:ml-24" : "lg:ml-64"}
-  `}
+        min-h-screen
+        bg-slate-50
+        transition-all duration-300
+        ml-0
+        ${collapsed ? "lg:ml-24" : "lg:ml-64"}
+      `}
       >
-        {/* Header / Hero */}
+        {/* HEADER */}
         <div
           className="
-      sticky top-0 z-30
-      border-b border-slate-200
-      bg-white/90 backdrop-blur
-    "
+          sticky top-0 z-30
+          border-b border-slate-200
+          bg-white/90 backdrop-blur
+        "
         >
           <div className="px-4 py-5 sm:px-6 lg:px-8">
             <div
               className="
-          flex flex-col gap-5
-          lg:flex-row lg:items-center
-          lg:justify-between
-        "
+              flex flex-col gap-5
+              lg:flex-row lg:items-center lg:justify-between
+            "
             >
-              {/* Left */}
+              {/* LEFT */}
               <div className="min-w-0">
                 <div className="flex items-start gap-3 sm:items-center">
-                  {/* Icon */}
+                  {/* ICON */}
                   <div
                     className="
-                flex h-12 w-12 shrink-0
-                items-center justify-center
-                rounded-2xl
-                bg-gradient-to-br
-                from-teal-500 to-cyan-500
-                text-xl text-white shadow-lg
-                sm:h-14 sm:w-14 sm:text-2xl
-              "
+                    flex h-12 w-12 shrink-0
+                    items-center justify-center
+                    rounded-2xl
+                    bg-gradient-to-br
+                    from-teal-500 to-cyan-500
+                    text-xl text-white shadow-lg
+                    sm:h-14 sm:w-14 sm:text-2xl
+                  "
                   >
                     📋
                   </div>
 
-                  {/* Title */}
+                  {/* TITLE */}
                   <div className="min-w-0 flex-1">
                     <h1
                       className="
-                  truncate
-                  text-2xl font-bold
-                  text-slate-800
-                  sm:text-3xl
-                "
+                      truncate
+                      text-2xl font-bold
+                      text-slate-800
+                      sm:text-3xl
+                    "
                     >
                       {project.name}
                     </h1>
 
-                    {/* Tags */}
+                    {/* TAGS */}
                     <div className="mt-2 flex flex-wrap gap-2">
                       <span
                         className="
-                    rounded-full
-                    bg-teal-100
-                    px-3 py-1
-                    text-xs font-semibold
-                    capitalize
-                    text-teal-700
-                  "
+                        rounded-full
+                        bg-teal-100
+                        px-3 py-1
+                        text-xs font-semibold
+                        capitalize
+                        text-teal-700
+                      "
                       >
                         {project.status}
                       </span>
 
                       <span
                         className="
-                    rounded-full
-                    bg-slate-100
-                    px-3 py-1
-                    text-xs font-medium
-                    text-slate-600
-                  "
+                        rounded-full
+                        bg-slate-100
+                        px-3 py-1
+                        text-xs font-medium
+                        text-slate-600
+                      "
                       >
                         Project Dashboard
                       </span>
@@ -220,15 +220,15 @@ const Dashboard = () => {
                   </div>
                 </div>
 
-                {/* Description */}
+                {/* DESCRIPTION */}
                 <p
                   className="
-              mt-4
-              max-w-4xl
-              text-sm leading-6
-              text-slate-500
-              sm:text-base sm:leading-7
-            "
+                  mt-4
+                  max-w-4xl
+                  text-sm leading-6
+                  text-slate-500
+                  sm:text-base sm:leading-7
+                "
                 >
                   {project.description || "No project description available."}
                 </p>
@@ -237,17 +237,18 @@ const Dashboard = () => {
           </div>
         </div>
 
-        <div className="mt-5 flex flex-wrap gap-3 mx-8">
+        {/* VIEW TOGGLES */}
+        <div className="mt-5 flex flex-wrap gap-3 px-4 sm:px-6 lg:px-8">
           <button
             onClick={() => setView("kanban")}
             className={`
-      rounded-xl px-4 py-2 text-sm font-medium transition
-      ${
-        view === "kanban"
-          ? "bg-teal-600 text-white"
-          : "bg-white text-slate-600 border border-slate-200"
-      }
-    `}
+            rounded-xl px-4 py-2 text-sm font-medium transition
+            ${
+              view === "kanban"
+                ? "bg-teal-600 text-white"
+                : "border border-slate-200 bg-white text-slate-600"
+            }
+          `}
           >
             Kanban View
           </button>
@@ -255,27 +256,27 @@ const Dashboard = () => {
           <button
             onClick={() => setView("list")}
             className={`
-      rounded-xl px-4 py-2 text-sm font-medium transition
-      ${
-        view === "list"
-          ? "bg-teal-600 text-white"
-          : "bg-white text-slate-600 border border-slate-200"
-      }
-    `}
+            rounded-xl px-4 py-2 text-sm font-medium transition
+            ${
+              view === "list"
+                ? "bg-teal-600 text-white"
+                : "border border-slate-200 bg-white text-slate-600"
+            }
+          `}
           >
             List View
           </button>
         </div>
 
-        {/* Content */}
+        {/* CONTENT */}
         <div
           className="
-    h-[calc(100vh-220px)]
-    overflow-auto
-    px-3 py-4
-    sm:px-5 sm:py-5
-    lg:px-8 lg:py-6
-  "
+          w-full
+          overflow-x-hidden
+          px-4 py-5
+          sm:px-6
+          lg:px-8
+        "
         >
           {view === "kanban" ? (
             <KanbanBoard projectId={project.id} />
