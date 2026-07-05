@@ -15,6 +15,11 @@ interface TaskCardProps {
   isDragging?: boolean;
 }
 
+interface Profile {
+  id: string;
+  full_name: string;
+}
+
 const priorityColor = {
   low: "bg-blue-100 text-blue-700 border border-blue-200",
   medium: "bg-yellow-100 text-yellow-700 border border-yellow-200",
@@ -34,26 +39,28 @@ const TaskCard = ({
   onClick,
   isDragging = false,
 }: TaskCardProps) => {
-  const [createdByUser, setCreatedByUser] = useState([]);
+  const [createdByUser, setCreatedByUser] = useState<Profile | null>(null);
   const assignee = users.find((user) => user.id === task.assigned_to);
 
-  const getCreatedUser = async (createdById: string) => {
+  const getCreatedUser = async (userId: string) => {
     const { data, error } = await supabase
       .from("profiles")
-      .select("*")
-      .eq("id", createdById)
+      .select("id, full_name")
+      .eq("id", userId)
       .single();
 
     if (error) {
-      console.error("Error fetching user:", error);
-      return null;
+      console.error(error);
+      return;
     }
 
     setCreatedByUser(data);
   };
 
   useEffect(() => {
-    getCreatedUser(task.created_by);
+    if (task.created_by) {
+      getCreatedUser(task.created_by);
+    }
   }, []);
 
   return (
