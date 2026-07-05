@@ -35,7 +35,7 @@ const Signup: React.FC = () => {
     const { data, error } = await supabase.auth.signInWithOAuth({
       provider: "google",
       options: {
-        redirectTo: `${window.location.origin}/home`,
+        redirectTo: "http://18.61.161.186:4173",
       },
     });
 
