@@ -49,6 +49,7 @@ const Login: React.FC = () => {
 
     if (error) {
       console.log("Login failed:", error.message);
+      setError(error.message);
       return;
     }
 
