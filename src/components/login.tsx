@@ -27,7 +27,7 @@ const Login: React.FC = () => {
     const { data, error } = await supabase.auth.signInWithOAuth({
       provider: "google",
       options: {
-        redirectTo: "http://18.61.161.186:4173/home",
+        redirectTo: "http://16.112.222.222:4173/home",
       },
     });
 
