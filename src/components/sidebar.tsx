@@ -11,6 +11,7 @@ import {
   UserCog,
   ChevronLeft,
   ChevronRight,
+  Bell,
 } from "lucide-react";
 
 import { NavLink, useNavigate } from "react-router-dom";
@@ -76,6 +77,12 @@ const Sidebar = ({ collapsed, setCollapsed }: sidebarItem) => {
       name: "Team Members",
       path: "/team-members",
       icon: Users,
+    },
+
+    {
+      name: "Notifications",
+      path: "/notifications",
+      icon: Bell,
     },
 
 

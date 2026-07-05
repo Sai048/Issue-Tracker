@@ -163,7 +163,6 @@ const TaskForm = ({
       const payload = {
         project_id: projectId,
         section_id: sectionId,
-
         title,
         description,
         assigned_to: assignedTo || null,
@@ -179,36 +178,62 @@ const TaskForm = ({
 
       console.log("Submitting payload:", payload);
 
-      if (isEdit && task?.id) {
-        await TaskService.updateTask(task.id, {
-          title,
+      // =========================
+      // CREATE TASK
+      // =========================
+      if (!isEdit) {
+        const createdTask = await TaskService.createTask(payload);
 
-          description,
-
-          assigned_to: assignedTo || null,
-
-          priority,
-
-          status,
-
-          story_points: storyPoints,
-
-          estimated_hours: estimatedHours,
-
-          start_date: startDate || null,
-
-          end_date: endDate || null,
-
-          due_date: dueDate || null,
-        });
-
-        showModal("success", "Task updated successfully");
-      } else {
-        await TaskService.createTask(payload);
+        // 🔔 Notify assigned user (on create)
+        if (assignedTo) {
+          await supabase.from("notifications").insert({
+            user_id: assignedTo,
+            title: "New Task Assigned",
+            message: `You were assigned: ${title}`,
+            type: "assigned",
+            task_id: createdTask?.id,
+          });
+        }
 
         showModal("success", "Task created successfully");
       }
 
+      // =========================
+      // UPDATE TASK
+      // =========================
+      if (isEdit && task?.id) {
+        const oldAssigned = task.assigned_to;
+
+        await TaskService.updateTask(task.id, {
+          title,
+          description,
+          assigned_to: assignedTo || null,
+          priority,
+          status,
+          story_points: storyPoints,
+          estimated_hours: estimatedHours,
+          start_date: startDate || null,
+          end_date: endDate || null,
+          due_date: dueDate || null,
+        });
+
+        // 🔔 Notify only if assignment changed
+        if (assignedTo && assignedTo !== oldAssigned) {
+          await supabase.from("notifications").insert({
+            user_id: assignedTo,
+            title: "Task Assigned",
+            message: `You were assigned to: ${title}`,
+            type: "assigned",
+            task_id: task.id,
+          });
+        }
+
+        showModal("success", "Task updated successfully");
+      }
+
+      // =========================
+      // FINAL ACTIONS
+      // =========================
       onSuccess();
 
       setTimeout(() => {
@@ -216,7 +241,6 @@ const TaskForm = ({
       }, 800);
     } catch (error) {
       console.error(error);
-
       showModal("error", "Unable to save task");
     } finally {
       setLoading(false);

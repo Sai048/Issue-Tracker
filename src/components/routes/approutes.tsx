@@ -10,6 +10,7 @@ import AdminGuard from "../guard/adminguard";
 import TeamsPage from "../teams";
 import TeamMembersPage from "../teamMembers";
 import MyTasks from "../kanban/mytasks";
+import NotificationPage from "../kanban/notifications/notificationPage";
 
 const AppRoutes = () => {
   return (
@@ -59,7 +60,7 @@ const AppRoutes = () => {
             </RouteGuard>
           }
         />
-         <Route
+        <Route
           path="/my-tasks"
           element={
             <RouteGuard>
@@ -72,6 +73,14 @@ const AppRoutes = () => {
           element={
             <RouteGuard>
               <Profile />
+            </RouteGuard>
+          }
+        />
+        <Route
+          path="/notifications"
+          element={
+            <RouteGuard>
+              <NotificationPage />
             </RouteGuard>
           }
         />
