@@ -85,8 +85,12 @@ const TaskForm = ({
   }, [defaultSectionId]);
 
   // Load task data
+  // Load task data
+  // Load task data
   useEffect(() => {
     if (!task) {
+      setSectionId(defaultSectionId || "");
+
       setTitle("");
       setDescription("");
       setAssignedTo("");
@@ -100,6 +104,9 @@ const TaskForm = ({
 
       return;
     }
+
+    // IMPORTANT
+    setSectionId(task.section_id || "");
 
     setTitle(task.title || "");
 
@@ -120,7 +127,7 @@ const TaskForm = ({
     setEndDate(task.end_date?.substring(0, 10) || "");
 
     setDueDate(task.due_date?.substring(0, 10) || "");
-  }, [task]);
+  }, [task, defaultSectionId]);
 
   const validate = () => {
     let valid = true;
@@ -160,31 +167,31 @@ const TaskForm = ({
     try {
       setLoading(true);
 
-      const payload = {
-        project_id: projectId,
-        section_id: sectionId,
-        title,
-        description,
-        assigned_to: assignedTo || null,
-        priority,
-        status,
-        story_points: storyPoints,
-        estimated_hours: estimatedHours,
-        start_date: startDate || null,
-        end_date: endDate || null,
-        due_date: dueDate || null,
-        created_by: createdBy,
-      };
-
-      console.log("Submitting payload:", payload);
-
       // =========================
       // CREATE TASK
       // =========================
       if (!isEdit) {
+        const payload = {
+          project_id: projectId,
+          section_id: sectionId,
+          title,
+          description,
+          assigned_to: assignedTo || null,
+          priority,
+          status,
+          story_points: storyPoints,
+          estimated_hours: estimatedHours,
+          start_date: startDate || null,
+          end_date: endDate || null,
+          due_date: dueDate || null,
+          created_by: createdBy,
+        };
+
+        console.log("CREATE PAYLOAD:", payload);
+
         const createdTask = await TaskService.createTask(payload);
 
-        // 🔔 Notify assigned user (on create)
+        // notification
         if (assignedTo) {
           await supabase.from("notifications").insert({
             user_id: assignedTo,
@@ -204,7 +211,8 @@ const TaskForm = ({
       if (isEdit && task?.id) {
         const oldAssigned = task.assigned_to;
 
-        await TaskService.updateTask(task.id, {
+        const updatePayload = {
+          section_id: sectionId,
           title,
           description,
           assigned_to: assignedTo || null,
@@ -215,9 +223,16 @@ const TaskForm = ({
           start_date: startDate || null,
           end_date: endDate || null,
           due_date: dueDate || null,
-        });
 
-        // 🔔 Notify only if assignment changed
+          // IMPORTANT
+          updated_by: createdBy,
+        };
+
+        console.log("UPDATE PAYLOAD:", updatePayload);
+
+        await TaskService.updateTask(task.id, updatePayload);
+
+        // notification
         if (assignedTo && assignedTo !== oldAssigned) {
           await supabase.from("notifications").insert({
             user_id: assignedTo,
@@ -231,9 +246,6 @@ const TaskForm = ({
         showModal("success", "Task updated successfully");
       }
 
-      // =========================
-      // FINAL ACTIONS
-      // =========================
       onSuccess();
 
       setTimeout(() => {
@@ -241,6 +253,7 @@ const TaskForm = ({
       }, 800);
     } catch (error) {
       console.error(error);
+
       showModal("error", "Unable to save task");
     } finally {
       setLoading(false);

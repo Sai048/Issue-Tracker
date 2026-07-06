@@ -8,6 +8,7 @@ import TaskComments from "./TaskComments";
 import TaskAttachments from "./TaskAttachments";
 import ConfirmModal from "../modal/modal";
 import Loading from "../loading";
+import { supabase } from "../supabase-client";
 
 interface User {
   id: string;
@@ -39,8 +40,35 @@ const TaskDrawer = ({
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [task, setTask] = useState<Task | null>(null);
-
+  const [currentUserId, setCurrentUserId] = useState("");
+  const [isAdmin, setIsAdmin] = useState(false);
   const [editMode, setEditMode] = useState(false);
+
+  const canManageTask = task && (task.created_by === currentUserId || isAdmin);
+
+  useEffect(() => {
+    const getCurrentUser = async () => {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+
+      if (!user) return;
+
+      setCurrentUserId(user.id);
+
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("role")
+        .eq("id", user.id)
+        .single();
+
+      if (profile?.role === "admin") {
+        setIsAdmin(true);
+      }
+    };
+
+    getCurrentUser();
+  }, []);
 
   // ===========================
   // Load Task
@@ -306,7 +334,8 @@ const TaskDrawer = ({
         </div>
 
         {/* Footer Actions */}
-        {!loading && !editMode && task && (
+        {/* Footer Actions */}
+        {!loading && !editMode && task && canManageTask && (
           <div className="sticky bottom-0 flex items-center justify-end gap-3 border-t bg-white p-4 shadow-lg">
             <button
               onClick={() => setEditMode(true)}
@@ -318,7 +347,7 @@ const TaskDrawer = ({
 
             <button
               onClick={() => setShowDeleteModal(true)}
-              className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-red-600 px-5 py-3 text-sm font-medium text-white transition hover:bg-red-700 sm:flex-none  cursor-pointer"
+              className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-red-600 px-5 py-3 text-sm font-medium text-white transition hover:bg-red-700 sm:flex-none cursor-pointer"
             >
               <Trash2 size={18} />
               Delete

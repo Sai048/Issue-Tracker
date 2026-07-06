@@ -10,7 +10,7 @@ import {
   ListTodo,
   UserCog,
   ChevronLeft,
-  ChevronRight,
+ ChevronRight,
   Bell,
 } from "lucide-react";
 
@@ -85,7 +85,6 @@ const Sidebar = ({ collapsed, setCollapsed }: sidebarItem) => {
       icon: Bell,
     },
 
-
     {
       name: "My Tasks",
       path: "/my-tasks",
@@ -111,18 +110,20 @@ const Sidebar = ({ collapsed, setCollapsed }: sidebarItem) => {
 
   return (
     <>
-      {/* Mobile Toggle */}
-      <button
-        onClick={() => setOpen(!open)}
-        className="
-          fixed left-4 top-4 z-[60]
-          rounded-lg bg-slate-900 p-2
-          text-white shadow-lg
-          lg:hidden
-        "
-      >
-        {open ? <X size={22} /> : <Menu size={22} />}
-      </button>
+      {/* Mobile Open Button */}
+      {!open && (
+        <button
+          onClick={() => setOpen(true)}
+          className="
+            fixed left-4 top-4 z-[60]
+            rounded-lg bg-slate-900 p-2
+            text-white shadow-lg
+            lg:hidden
+          "
+        >
+          <Menu size={22} />
+        </button>
+      )}
 
       {/* Overlay */}
       {open && (
@@ -160,6 +161,22 @@ const Sidebar = ({ collapsed, setCollapsed }: sidebarItem) => {
               px-4
             "
           >
+            {/* Mobile Close Button */}
+            {open && (
+              <button
+                onClick={() => setOpen(false)}
+                className="
+                  absolute right-4 top-1/2
+                  -translate-y-1/2
+                  rounded-lg bg-slate-800 p-2
+                  text-white
+                  lg:hidden
+                "
+              >
+                <X size={22} />
+              </button>
+            )}
+
             {/* Collapse Button */}
             <button
               onClick={() => setCollapsed(!collapsed)}
